@@ -14,6 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #define FAULTRANGE_HH_
 
 #include "boost/cstdint.hpp"
+#include <stdint.h>
 #include <list>
 
 class DRAMDomain;
