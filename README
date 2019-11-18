@@ -16,15 +16,22 @@ FaultSim depends on the Boost library version 1.53.
 
 BUILDING FAULTSIM
 
+
+first get boost lib
+
+sudo apt-get install libboost-all-dev
+
 Create environment variables to point to the include and library directories of your installed BOOST library
 (typically boost_1_53_0/include) e.g.
 
-export BOOSTINC=/path/../boost_1_53_0/include
-export BOOSTLIB=/path/../boost_1_53_0/lib
+
+
+export BOOSTINC=/usr/include/boost/
+export BOOSTLIB=/usr/lib/x86_64-linux-gnu/
 
 Then type;
 
-make
+make trying
 
 RUNNING FAULTSIM
 
