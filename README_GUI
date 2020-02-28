@@ -1,0 +1,14 @@
+Before anything you must make sure you have gtk 3.0 installed in your computer. If you do not already then run this command: 
+
+sudo apt-get install libgtk-3-dev
+
+
+In order to run compile the faultsim gui simply run "make gui"
+
+To run faultsim gui just type "./faultsim_gui"
+
+Thats all!
+
+
+
+Note: Any configuration files will be automatically saved in the "configs" directory. They are also ran from here.

@@ -27,3 +27,5 @@ doc:
 
 trying:
 	$(CC) $(SOURCES) $(INC) $(LDFLAGS) -o faultsim
+gui:
+	gcc -o faultsim_gui faultsim_gui.c `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
