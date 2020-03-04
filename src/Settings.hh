@@ -48,4 +48,23 @@ public:
 
 	// ECC configuration
 	int repairmode;     // Type of ECC to apply
+
+        //FIT 
+        //transient
+        double trans_1bit;
+        double trans_1word;
+        double trans_1col; 
+        double trans_1row;
+        double trans_1bank;
+        double trans_nbank;
+        double trans_nrank;
+
+        //permanent
+        double perm_1bit;
+        double perm_1word;
+        double perm_1col;
+        double perm_1row;
+        double perm_1bank;
+        double perm_nbank;
+        double perm_nrank;
 };

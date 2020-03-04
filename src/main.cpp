@@ -110,7 +110,6 @@ int main(int argc, char** argv) {
 
     // Build the physical memory organization and attach ECC scheme /////
     GroupDomain *module = NULL;
-
     if( settings.organization == MO_DIMM ) {
     	module = genModuleDIMM();
     } else if( settings.organization == MO_3D ) {
@@ -178,23 +177,23 @@ GroupDomain* genModuleDIMM( void )
 			if( settings.enable_permanent ) dram0->setFIT( DRAM_1BIT, 0, 33.05 );
 		} else if( settings.faultmode == FM_JAGUAR ) {
 			if( settings.enable_transient ) {
-				dram0->setFIT( DRAM_1BIT, 1, 14.2 );
-				dram0->setFIT( DRAM_1WORD, 1, 1.4 );
-				dram0->setFIT( DRAM_1COL, 1, 1.4 );
-				dram0->setFIT( DRAM_1ROW, 1, 0.2 );
-				dram0->setFIT( DRAM_1BANK, 1, 0.8 );
-				dram0->setFIT( DRAM_NBANK, 1, 0.3 );
-				dram0->setFIT( DRAM_NRANK, 1, 0.9 );
+				dram0->setFIT( DRAM_1BIT, 1, settings.trans_1bit);
+				dram0->setFIT( DRAM_1WORD, 1, settings.trans_1word);
+				dram0->setFIT( DRAM_1COL, 1, settings.trans_1col);
+				dram0->setFIT( DRAM_1ROW, 1, settings.trans_1row);
+				dram0->setFIT( DRAM_1BANK, 1, settings.trans_1bank);
+				dram0->setFIT( DRAM_NBANK, 1, settings.trans_nbank);
+				dram0->setFIT( DRAM_NRANK, 1, settings.trans_nrank);
 			}
 
 			if( settings.enable_permanent ) {
-				dram0->setFIT( DRAM_1BIT, 0, 18.6 );
-				dram0->setFIT( DRAM_1WORD, 0, 0.3 );
-				dram0->setFIT( DRAM_1COL, 0, 5.6 );
-				dram0->setFIT( DRAM_1ROW, 0, 8.2 );
-				dram0->setFIT( DRAM_1BANK, 0, 10.0 );
-				dram0->setFIT( DRAM_NBANK, 0, 1.4 );
-				dram0->setFIT( DRAM_NRANK, 0, 2.8 );
+				dram0->setFIT( DRAM_1BIT, 0, settings.perm_1bit);
+				dram0->setFIT( DRAM_1WORD, 0, settings.perm_1word);
+				dram0->setFIT( DRAM_1COL, 0, settings.perm_1col);
+				dram0->setFIT( DRAM_1ROW, 0, settings.perm_1row);
+				dram0->setFIT( DRAM_1BANK, 0, settings.perm_1bank);
+				dram0->setFIT( DRAM_NBANK, 0, settings.perm_nbank);
+				dram0->setFIT( DRAM_NRANK, 0, settings.perm_nrank);
 			}
 		} else {
 			assert(0);
@@ -260,23 +259,23 @@ GroupDomain *genModule3D( void )
 			if( settings.enable_permanent ) dram0->setFIT( DRAM_1BIT, 0, 33.05 );
 		} else if( settings.faultmode == FM_JAGUAR ) {
 			if( settings.enable_transient ) {
-				dram0->setFIT( DRAM_1BIT, 1, 14.2 );
-				dram0->setFIT( DRAM_1WORD, 1, 1.4 );
-				dram0->setFIT( DRAM_1COL, 1, 1.4 );
-				dram0->setFIT( DRAM_1ROW, 1, 0.2 );
-				dram0->setFIT( DRAM_1BANK, 1, 0.8 );
-				dram0->setFIT( DRAM_NBANK, 1, 0.3 );
-				dram0->setFIT( DRAM_NRANK, 1, DRAM_nrank_fit_trans );
+				dram0->setFIT( DRAM_1BIT, 1, settings.trans_1bit);
+				dram0->setFIT( DRAM_1WORD, 1, settings.trans_1word);
+				dram0->setFIT( DRAM_1COL, 1, settings.trans_1col);
+				dram0->setFIT( DRAM_1ROW, 1, settings.trans_1row);
+				dram0->setFIT( DRAM_1BANK, 1, settings.trans_1bank);
+				dram0->setFIT( DRAM_NBANK, 1, settings.trans_nbank);
+				dram0->setFIT( DRAM_NRANK, 1, settings.trans_nrank);
 			}
 
 			if( settings.enable_permanent ) {
-				dram0->setFIT( DRAM_1BIT, 0, 18.6 );
-				dram0->setFIT( DRAM_1WORD, 0, 0.3 );
-				dram0->setFIT( DRAM_1COL, 0, 5.6 );
-				dram0->setFIT( DRAM_1ROW, 0, 8.2 );
-				dram0->setFIT( DRAM_1BANK, 0, 10.0 );
-				dram0->setFIT( DRAM_NBANK, 0, 1.4 );
-				dram0->setFIT( DRAM_NRANK, 0, DRAM_nrank_fit_perm );
+				dram0->setFIT( DRAM_1BIT, 0, settings.perm_1bit);
+				dram0->setFIT( DRAM_1WORD, 0, settings.perm_1word);
+				dram0->setFIT( DRAM_1COL, 0, settings.perm_1col);
+				dram0->setFIT( DRAM_1ROW, 0, settings.perm_1row);
+				dram0->setFIT( DRAM_1BANK, 0, settings.perm_1bank);
+				dram0->setFIT( DRAM_NBANK, 0, settings.perm_nbank);
+				dram0->setFIT( DRAM_NRANK, 0, settings.perm_nrank);
 			}
 		} else {
 			assert(0);
