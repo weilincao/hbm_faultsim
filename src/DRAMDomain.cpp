@@ -114,6 +114,13 @@ const char *DRAMDomain::faultClassString( int i )
 	return "";
 }
 
+void DRAMDomain::event_fault_update(int fault,bool transient){
+        if(transient)
+            n_faults_transient_class[fault]++;
+        else
+           n_faults_permanent_class[fault]++; 
+}
+
 int DRAMDomain::update( uint test_mode_t )
 {
 	int newfault0 = 0;
@@ -370,7 +377,7 @@ FaultRange *DRAMDomain::genRandomRange( bool rank, bool bank, bool row, bool col
 	fr->fAddr = 0;
 	fr->fWildMask = 0;
 	fr->Chip=0;
-    fr->transient = transient;
+        fr->transient = transient;
 	fr->TSV = isTSV_t;
 	fr->max_faults = 1;	// maximum number of bits covered by FaultRange
 
