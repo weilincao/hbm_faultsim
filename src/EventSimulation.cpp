@@ -132,8 +132,15 @@ uint64_t EventSimulation::runOne( uint64_t max_s, int verbose, uint64_t bin_leng
 					}
 
 					fr->timestamp = timestamp;
-					if( fr->transient ) fr->m_pDRAM->n_faults_transient++;
-					else fr->m_pDRAM->n_faults_permanent++;
+					if( fr->transient ){ 
+                                            fr->m_pDRAM->n_faults_transient++; 
+                                            pD->event_fault_update(errtype%7,1);
+
+                                        }
+					else {
+                                            fr->m_pDRAM->n_faults_permanent++;
+                                            pD->event_fault_update(errtype%7,0);
+                                        }
 					q1.push( fr );
 					//iter_num_errors++;
 					err_inserted=1;
