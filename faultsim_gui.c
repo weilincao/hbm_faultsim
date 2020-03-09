@@ -160,6 +160,22 @@ extern "C" void on_save_file_clicked(GtkButton *b){
     "repairmode = %s\n",
     st0,st1,st2,st3,st4,st5,st6,st7,st8,st9,st10,st11,st12,st13,st14,st15,st16,st17,st18,st19,st20,st21,st22,st23,st24,st25,st26,st27);
 
+    fprintf(f, "\n[FIT]\n"
+"trans_1bit = 14.2\n"
+"trans_1word = 1.4\n"
+"trans_1col = 1.4\n"
+"trans_1row = 0.2\n"
+"trans_1bank = 0.8\n"
+"trans_nbank = 0.3\n"
+"trans_nrank = 0.9\n"
+"perm_1bit = 18.6\n"
+"perm_1word = 0.3\n"
+"perm_1col = 5.6\n"
+"perm_1row = 8.2\n"
+"perm_1bank = 10.0\n"
+"perm_nbank = 1.4\n"
+"perm_nrank = 2.8");
+
     fclose(f);
     free(full_path);
 
