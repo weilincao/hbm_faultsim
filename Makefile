@@ -31,4 +31,4 @@ trying:
 debug:
 	$(CC) -g $(SOURCES) $(INC) $(LDFLAGS) -o faultsim
 gui:
-	g++ -std=c++11 -rdynamic -o faultsim_gui src/ConfigParser.cpp faultsim_gui.cpp `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
+	g++ -std=c++11 -rdynamic -o faultsim_gui src/ConfigParser.cpp faultsim_gui.c `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
