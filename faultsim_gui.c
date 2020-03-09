@@ -6,9 +6,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include "src/Settings.hh"
+#include "src/ConfigParser.hh"
+
 //Make global of buttons and text box
 
 GtkWidget *save_file;
+GtkWidget *load_file;
 GtkWidget *run_button;
 GtkWidget *run_file;
 GtkWidget *fixed1;
@@ -68,7 +76,7 @@ int main(int argc, char* argv[]){
 }
 
 
-void on_save_file_clicked(GtkButton *b){
+extern "C" void on_save_file_clicked(GtkButton *b){
 
     const  gchar* st0  = gtk_entry_get_text(GTK_ENTRY(s0));
     const  gchar* st1  = gtk_entry_get_text(GTK_ENTRY(s1));
@@ -152,12 +160,28 @@ void on_save_file_clicked(GtkButton *b){
     "repairmode = %s\n",
     st0,st1,st2,st3,st4,st5,st6,st7,st8,st9,st10,st11,st12,st13,st14,st15,st16,st17,st18,st19,st20,st21,st22,st23,st24,st25,st26,st27);
 
+    fprintf(f, "\n[FIT]\n"
+"trans_1bit = 14.2\n"
+"trans_1word = 1.4\n"
+"trans_1col = 1.4\n"
+"trans_1row = 0.2\n"
+"trans_1bank = 0.8\n"
+"trans_nbank = 0.3\n"
+"trans_nrank = 0.9\n"
+"perm_1bit = 18.6\n"
+"perm_1word = 0.3\n"
+"perm_1col = 5.6\n"
+"perm_1row = 8.2\n"
+"perm_1bank = 10.0\n"
+"perm_nbank = 1.4\n"
+"perm_nrank = 2.8");
+
     fclose(f);
     free(full_path);
 
 }
 
-void on_run_button_clicked(GtkButton *b){
+extern "C" void on_run_button_clicked(GtkButton *b){
     const  gchar* rf  = gtk_entry_get_text(GTK_ENTRY(run_file));
 
     char* executable = "./faultsim";
@@ -192,6 +216,7 @@ void on_run_button_clicked(GtkButton *b){
 void set_up_globals(){
 
     save_file = GTK_WIDGET(gtk_builder_get_object(builder,"save_file"));
+    load_file = GTK_WIDGET(gtk_builder_get_object(builder,"load_file"));
     run_button = GTK_WIDGET(gtk_builder_get_object(builder,"run_button"));
     run_file = GTK_WIDGET(gtk_builder_get_object(builder,"run_file"));
     file_name = GTK_WIDGET(gtk_builder_get_object(builder,"file_name"));
@@ -266,4 +291,58 @@ void set_up_default(){
     gtk_entry_set_text(GTK_ENTRY(f5),"1.0");
 
     gtk_entry_set_text(GTK_ENTRY(e0),"0");
+}
+
+bool ini_settings_update (void) {
+
+  std::string f_path = "configs/";
+  const char* f_name = gtk_entry_get_text(GTK_ENTRY(file_name));
+
+  f_path += f_name;
+  std::ifstream ini_file(f_path);
+  if (!ini_file) {
+    std::cerr << "Unable to open " << f_path << std::endl;
+    return false;
+  }
+	parser((char*)f_path.c_str());
+  return true;
+}
+
+struct Settings settings;
+extern "C" void on_load_file_clicked(GtkButton *b) {
+
+  if ( !ini_settings_update() ) return;
+
+  gtk_entry_set_text(GTK_ENTRY(s0), std::to_string(settings.sim_mode).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s1), std::to_string(settings.interval_s).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s2), std::to_string(settings.scrub_s).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s3), std::to_string(settings.max_s).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s4), std::to_string(settings.n_sims).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s5), std::to_string(settings.continue_running).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s6), std::to_string(settings.verbose).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s7), std::to_string(settings.debug).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s8), std::to_string(settings.output_bucket_s).c_str());
+
+  gtk_entry_set_text(GTK_ENTRY(o0), std::to_string(settings.organization).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o1), std::to_string(settings.chips_per_rank).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o2), std::to_string(settings.chip_bus_bits).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o3), std::to_string(settings.ranks).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o4), std::to_string(settings.banks).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o5), std::to_string(settings.rows).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o6), std::to_string(settings.cols).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o7), std::to_string(settings.cube_model).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o8), std::to_string(settings.cube_addr_dec_depth).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o9), std::to_string(settings.cube_ecc_tsv).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o10), std::to_string(settings.cube_redun_tsv).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o11), std::to_string(settings.data_block_bits).c_str());
+
+  gtk_entry_set_text(GTK_ENTRY(f0), std::to_string(settings.faultmode).c_str());
+  gtk_entry_set_text(GTK_ENTRY(f1), std::to_string(settings.enable_permanent).c_str());
+  gtk_entry_set_text(GTK_ENTRY(f2), std::to_string(settings.enable_transient).c_str());
+  gtk_entry_set_text(GTK_ENTRY(f3), std::to_string(settings.enable_tsv).c_str());
+  gtk_entry_set_text(GTK_ENTRY(f4), std::to_string(settings.fit_factor).c_str());
+  gtk_entry_set_text(GTK_ENTRY(f5), std::to_string(settings.tsv_fit).c_str());
+
+  gtk_entry_set_text(GTK_ENTRY(e0), std::to_string(settings.repairmode).c_str());
+
 }

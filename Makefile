@@ -20,7 +20,7 @@ $(EXECUTABLE): $(OBJECTS)
 clean:
 	rm -rf faultsim
 	rm -rf src/*.o
-	cd doc && make clean
+	rm -rf faultsim_gui
 
 doc:
 	cd doc && make
@@ -31,4 +31,4 @@ trying:
 debug:
 	$(CC) -g $(SOURCES) $(INC) $(LDFLAGS) -o faultsim
 gui:
-	gcc -o faultsim_gui faultsim_gui.c `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
+	g++ -std=c++11 -rdynamic -o faultsim_gui src/ConfigParser.cpp faultsim_gui.c `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
