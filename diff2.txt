@@ -1,0 +1,2 @@
+make trying
+g++ src/GroupDomain.cpp src/BCHRepair_cube.cpp src/ChipKillRepair.cpp src/FaultRange.cpp src/GroupDomain_dimm.cpp src/GroupDomain_cube.cpp src/ChipKillRepair_cube.cpp src/ConfigParser.cpp src/EventSimulation.cpp src/FaultDomain.cpp src/RepairScheme.cpp src/Simulation.cpp src/CubeRAIDRepair.cpp src/DRAMDomain.cpp src/main.cpp src/BCHRepair.cpp -I/usr/include/boost/ -L /usr/lib/i386-linux-gnu/ -lboost_program_options -lboost_system -o faultsim
