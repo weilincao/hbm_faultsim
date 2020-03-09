@@ -1,0 +1,3 @@
+*.o
+faultsim
+faultsim_gui
