@@ -31,6 +31,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "EventSimulation.hh"
 #include "Settings.hh"
 #include "stdio.h"
+#include "ReedSolomonRepair_cube.hh"
 
 void printBanner( void );
 GroupDomain* genModuleDIMM( void );
@@ -300,9 +301,12 @@ GroupDomain *genModule3D( void )
 		BCHRepair_cube *bch2 = new BCHRepair_cube( string("6EC7ED"), 6, 7, settings.data_block_bits );
 		stack0->addRepair( bch2 );
 	}
-	else if( settings.repairmode == 6 ) {
+	else if( settings.repairmode == 6 && settings.data_block_bits == 512 && settings.symbol_size_bits == 8) {
+		ReedSolomonRepair_cube *RS0 = new ReedSolomonRepair_cube( string("Repair0"), 4, 5, settings.data_block_bits, settings.symbol_size_bits);
+		stack0->addRepair( RS0 );
+	}
+	else {
 		assert(0);
 	}
-
 	return stack0;
 }

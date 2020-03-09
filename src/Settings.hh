@@ -48,7 +48,8 @@ public:
 
 	// ECC configuration
 	int repairmode;     // Type of ECC to apply
-
+	//ReedSolomon symbol size
+	int symbol_size_bits;
         //FIT 
         //transient
         double trans_1bit;

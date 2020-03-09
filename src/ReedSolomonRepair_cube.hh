@@ -14,6 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #define REEDSOLOMON_REPAIR_CUBE_HH_
 
 #include "RepairScheme.hh"
+using namespace std;
 
 class ReedSolomonRepair_cube : public RepairScheme
 {
@@ -30,7 +31,7 @@ public:
 	void clear_counters ( void );
 
 private:
-	uint64_t m_n_correctable, m_n_detectable, m_bitwidth, m_log_block_bits, m_log_symbol_bits;
+	uint64_t m_n_correctable, m_n_detectable, m_bitwidth, m_log_block_bits, m_log_symbol_bits, m_symbol_size_bits;
 	uint64_t counter_prev, counter_now;
 };
 

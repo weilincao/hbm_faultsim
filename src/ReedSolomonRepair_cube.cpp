@@ -13,6 +13,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "ReedSolomonRepair_cube.hh"
 #include "DRAMDomain.hh"
 #include "Settings.hh"
+#include <iostream>
 
 extern struct Settings settings;
 
@@ -126,19 +127,19 @@ void ReedSolomonRepair_cube::repair( FaultDomain *fd, uint64_t &n_undetectable, 
 
 				// For this algorithm, one intersection with the symbol being tested actually means one
 				// faulty symbol in the range due to the use of each fault range as a reference
-				if(n_intersections <= m_n_correct)
+				if(n_intersections <= m_n_correctable)
 				{
 					// correctable
 				}
-				if(n_intersections > m_n_correct)
+				if(n_intersections > m_n_correctable)
 				{
-					n_uncorrectable += (n_intersections - m_n_correct);
+					n_uncorrectable += (n_intersections - m_n_correctable);
 					frOrg->transient_remove = false;
 					if( !settings.continue_running ) return;
 				}
-				if(n_intersections >= m_n_detect)
+				if(n_intersections >= m_n_detectable)
 				{
-					n_undetectable += (n_intersections - m_n_detect);
+					n_undetectable += (n_intersections - m_n_detectable);
 				}
 			}
 		}
@@ -146,22 +147,22 @@ void ReedSolomonRepair_cube::repair( FaultDomain *fd, uint64_t &n_undetectable, 
 
 }
 
-uint64_t ReedSolomon_cube::fill_repl(FaultDomain *fd)
+uint64_t ReedSolomonRepair_cube::fill_repl(FaultDomain *fd)
 {
 	return 0;
 }
-void ReedSolomon_cube::printStats( void )
+void ReedSolomonRepair_cube::printStats( void )
 {
 	RepairScheme::printStats();
 }
 
-void ReedSolomon_cube::clear_counters(void)
+void ReedSolomonRepair_cube::clear_counters(void)
 {
 	counter_prev=0;
 	counter_now=0;
 }
 
-void ReedSolomon_cube::resetStats( void )
+void ReedSolomonRepair_cube::resetStats( void )
 {
 	RepairScheme::resetStats();
 }
