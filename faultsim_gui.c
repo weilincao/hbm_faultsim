@@ -156,7 +156,11 @@ extern "C" void on_save_file_clicked(GtkButton *b){
     "enable_tsv = %s\n"
     "fit_factor = %s\n"
     "tsv_fit = %s\n\n"
+    "\[ReedSolomon]\n"
+    "symbol_size_bits = 8\n"
     "\[ECC]\n"
+    "\[ReedSolomon]\n"
+    "symbol_size_bits = 8\n\n"
     "repairmode = %s\n",
     st0,st1,st2,st3,st4,st5,st6,st7,st8,st9,st10,st11,st12,st13,st14,st15,st16,st17,st18,st19,st20,st21,st22,st23,st24,st25,st26,st27);
 
