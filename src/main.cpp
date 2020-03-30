@@ -284,11 +284,10 @@ GroupDomain *genModule3D( void )
 
 		stack0->addDomain( dram0, i );
 	}
-
-  if ( settings.repairmode == 0 ) {
-    // do nothing
-  }
-  else if( settings.repairmode == 1 ) {
+	
+	if(settings.repairmode == 0) {
+		//do nothing
+	} else if( settings.repairmode == 1 ) {
 		ChipKillRepair_cube *ck0 = new ChipKillRepair_cube( string("CK1"), 1, 2, stack0);
 		stack0->addRepair( ck0 );
 	} else if( settings.repairmode == 2 ) {
