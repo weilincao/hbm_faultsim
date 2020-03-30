@@ -1,0 +1,15 @@
+**NEED PYTHON 3 INSTALLED**
+**ALSO NEED THE FOLLOWING MODULES INSTALLED**
+	-argparse
+	-os
+	-numpy
+	-matplotlib (needs to be for python3)
+
+These can be installed using pip3 (pip3 install numpy)
+
+You can provide configuration files for bch, reed solomon, or no ECC.
+
+Ex.
+python3 faultsim_output_api.py -n=HBM_none.ini -b=HBM_BCH1.ini -r=HBM_RS512.ini
+
+This will faultsim for all the provided files and plot the results on one graph
