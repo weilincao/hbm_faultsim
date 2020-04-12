@@ -18,6 +18,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include <sys/time.h>
 #include "faultsim.hh"
 #include "Settings.hh"
+#include "CsvPrinting.hh"
+#include <string.h>
 
 extern struct Settings settings;
 
@@ -527,6 +529,24 @@ void DRAMDomain::printStats( void )
 			cout << "FR " << (*it)->toString() << "\n";
 		}
 	}
+
+        /*** if CSV_OUT is defined then prints a csv file to file called out.csv ***/
+        #ifdef CSV_OUT
+        char buff1[5000]; // assumes string will be no longer than characters
+        char buff2[1000];
+        buff1[0] = '\0';
+        for(int i = 0 ; i <DRAM_MAX; i++){
+            sprintf(buff2,"%li,",n_faults_transient_class[i]);
+            strcat(buff1,buff2);
+        }
+        for(int i = 0 ; i <DRAM_MAX -1; i++){
+            sprintf(buff2,"%li,",n_faults_permanent_class[i]);
+            strcat(buff1,buff2);
+        }
+        sprintf(buff2,"%li\n",n_faults_permanent_class[DRAM_MAX-1]);
+        strcat(buff1,buff2);
+        CSVPRINTING.append_str(buff1);
+        #endif 
 }
 
 void DRAMDomain::resetStats( void )

@@ -32,6 +32,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "Settings.hh"
 #include "stdio.h"
 #include "ReedSolomonRepair_cube.hh"
+#include "CsvPrinting.hh"
 
 void printBanner( void );
 GroupDomain* genModuleDIMM( void );
@@ -57,6 +58,9 @@ struct Settings settings;
 int main(int argc, char** argv) {
 
     std::string chain="NULL";
+    #ifdef CSV_OUT
+    CSVPRINTING.init();
+    #endif
     printBanner();
     printf("started\n");
     
@@ -151,7 +155,10 @@ int main(int argc, char** argv) {
     sim.init( settings.max_s );	// one-time set-up that does FIT rate scaling based on interval
     sim.simulate( settings.max_s, settings.n_sims, settings.verbose, settings.output_file);
     sim.printStats();
-
+    
+    #ifdef CSV_OUT
+    CSVPRINTING.clean_up();
+    #endif
 	return SUCCESS;
 
 }
