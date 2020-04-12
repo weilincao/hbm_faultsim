@@ -58,7 +58,7 @@ void parser(char *ininame)
 	settings.tsv_fit = pt.get<double>("Fault.tsv_fit");
 
 	settings.repairmode = pt.get<int>("ECC.repairmode");
-        settings.symbol_size_bits = pt.get<int>("ReedSolomon.symbol_size_bits");
+        settings.symbol_size_bits = pt.get<int>("ECC.symbol_size_bits");
         //FAIILURE IN TIME options
         //transient
         settings.trans_1bit = pt.get<double>("FIT.trans_1bit");

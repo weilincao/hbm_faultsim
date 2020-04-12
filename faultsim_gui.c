@@ -13,6 +13,14 @@
 #include "src/Settings.hh"
 #include "src/ConfigParser.hh"
 
+
+#define VAR_AMNT 43
+#define SIM_SIZE 9
+#define ORG_SIZE 12
+#define FAULT_SIZE 6
+#define ECC_SIZE 2
+#define FIT_SIZE 14
+
 //Make global of buttons and text box
 
 GtkWidget *save_file;
@@ -21,36 +29,15 @@ GtkWidget *run_button;
 GtkWidget *run_file;
 GtkWidget *fixed1;
 GtkWidget *window;
-GtkWidget *s0;
-GtkWidget *s1;
-GtkWidget *s2;
-GtkWidget *s3;
-GtkWidget *s4;
-GtkWidget *s5;
-GtkWidget *s6;
-GtkWidget *s7;
-GtkWidget *s8;
-GtkWidget *o0;
-GtkWidget *o1;
-GtkWidget *o2;
-GtkWidget *o3;
-GtkWidget *o4;
-GtkWidget *o5;
-GtkWidget *o6;
-GtkWidget *o7;
-GtkWidget *o8;
-GtkWidget *o9;
-GtkWidget *o10;
-GtkWidget *o11;
-GtkWidget *f0;
-GtkWidget *f1;
-GtkWidget *f2;
-GtkWidget *f3;
-GtkWidget *f4;
-GtkWidget *f5;
-GtkWidget *e0;
+GtkWidget *s[SIM_SIZE];
+GtkWidget *o[ORG_SIZE];
+GtkWidget *f[FAULT_SIZE];
+GtkWidget *e[ECC_SIZE];
+GtkWidget *fi[FIT_SIZE];
 GtkWidget *file_name;
 GtkBuilder *builder;
+
+
 
 void set_up_globals();
 void set_up_default();
@@ -78,38 +65,26 @@ int main(int argc, char* argv[]){
 
 extern "C" void on_save_file_clicked(GtkButton *b){
 
-    const  gchar* st0  = gtk_entry_get_text(GTK_ENTRY(s0));
-    const  gchar* st1  = gtk_entry_get_text(GTK_ENTRY(s1));
-    const  gchar* st2  = gtk_entry_get_text(GTK_ENTRY(s2));
-    const  gchar* st3  = gtk_entry_get_text(GTK_ENTRY(s3));
-    const  gchar* st4  = gtk_entry_get_text(GTK_ENTRY(s4));
-    const  gchar* st5  = gtk_entry_get_text(GTK_ENTRY(s5));
-    const  gchar* st6  = gtk_entry_get_text(GTK_ENTRY(s6));
-    const  gchar* st7  = gtk_entry_get_text(GTK_ENTRY(s7));
-    const  gchar* st8  = gtk_entry_get_text(GTK_ENTRY(s8));
+    const gchar* st[VAR_AMNT];
 
-    const  gchar* st9  = gtk_entry_get_text(GTK_ENTRY(o0));
-    const  gchar* st10  = gtk_entry_get_text(GTK_ENTRY(o1));
-    const  gchar* st11  = gtk_entry_get_text(GTK_ENTRY(o2));
-    const  gchar* st12  = gtk_entry_get_text(GTK_ENTRY(o3));
-    const  gchar* st13  = gtk_entry_get_text(GTK_ENTRY(o4));
-    const  gchar* st14  = gtk_entry_get_text(GTK_ENTRY(o5));
-    const  gchar* st15  = gtk_entry_get_text(GTK_ENTRY(o6));
-    const  gchar* st16  = gtk_entry_get_text(GTK_ENTRY(o7));
-    const  gchar* st17  = gtk_entry_get_text(GTK_ENTRY(o8));
-    const  gchar* st18  = gtk_entry_get_text(GTK_ENTRY(o9));
-    const  gchar* st19  = gtk_entry_get_text(GTK_ENTRY(o10));
-    const  gchar* st20  = gtk_entry_get_text(GTK_ENTRY(o11));
 
-    const  gchar* st21  = gtk_entry_get_text(GTK_ENTRY(f0));
-    const  gchar* st22  = gtk_entry_get_text(GTK_ENTRY(f1));
-    const  gchar* st23  = gtk_entry_get_text(GTK_ENTRY(f2));
-    const  gchar* st24  = gtk_entry_get_text(GTK_ENTRY(f3));
-    const  gchar* st25  = gtk_entry_get_text(GTK_ENTRY(f4));
-    const  gchar* st26  = gtk_entry_get_text(GTK_ENTRY(f5));
+    int offset = 0; //offset for st array 
+
+    for(int i = 0 ; i < SIM_SIZE; i++,offset++)
+        st[offset] = gtk_entry_get_text(GTK_ENTRY(s[i]));
+    for(int i = 0 ; i < ORG_SIZE; i++,offset++)
+        st[offset] = gtk_entry_get_text(GTK_ENTRY(o[i])); 
+
+    for(int i = 0 ; i < FAULT_SIZE; i++,offset++)
+        st[offset] = gtk_entry_get_text(GTK_ENTRY(f[i])); 
     
-    const  gchar* st27  = gtk_entry_get_text(GTK_ENTRY(e0));
+    for(int i = 0 ; i < ECC_SIZE; i++,offset++)
+        st[offset] = gtk_entry_get_text(GTK_ENTRY(e[i]));; 
 
+    for(int i = 0 ; i < FIT_SIZE; i++,offset++)
+        st[offset] = gtk_entry_get_text(GTK_ENTRY(fi[i]));; 
+    
+    
     const gchar* f_name = gtk_entry_get_text(GTK_ENTRY(file_name));
 
     char* temp = "configs/";
@@ -158,25 +133,23 @@ extern "C" void on_save_file_clicked(GtkButton *b){
     "tsv_fit = %s\n\n"
     "\[ECC]\n"
     "repairmode = %s\n\n"
-    "\[ReedSolomon]\n"
-    "symbol_size_bits = 8\n",
-    st0,st1,st2,st3,st4,st5,st6,st7,st8,st9,st10,st11,st12,st13,st14,st15,st16,st17,st18,st19,st20,st21,st22,st23,st24,st25,st26,st27);
-
-    fprintf(f, "\n[FIT]\n"
-"trans_1bit = 14.2\n"
-"trans_1word = 1.4\n"
-"trans_1col = 1.4\n"
-"trans_1row = 0.2\n"
-"trans_1bank = 0.8\n"
-"trans_nbank = 0.3\n"
-"trans_nrank = 0.9\n"
-"perm_1bit = 18.6\n"
-"perm_1word = 0.3\n"
-"perm_1col = 5.6\n"
-"perm_1row = 8.2\n"
-"perm_1bank = 10.0\n"
-"perm_nbank = 1.4\n"
-"perm_nrank = 2.8");
+    "symbol_size_bits = %s\n\n"
+    "trans_1bit = %s\n"
+    "trans_1word = %s\n"
+    "trans_1col = %s\n"
+    "trans_1row = %s\n"
+    "trans_1bank = %s\n"
+    "trans_nbank = %s\n"
+    "trans_nrank = %s\n"
+    "perm_1bit = %s\n"
+    "perm_1word = %s\n"
+    "perm_1col = %s\n"
+    "perm_1row = %s\n"
+    "perm_1bank = %s\n"
+    "perm_nbank = %s\n"
+    "perm_nrank = %s",
+    st[0],st[1],st[2],st[3],st[4],st[5],st[6],st[7],st[8],st[9],st[10],st[11],st[12],st[13],st[14],st[15],st[16],st[17],st[18],st[19],st[20],st[21],st[22],st[23],st[24],st[25],st[26],st[27],
+    st[28],st[29],st[30],st[31],st[32],st[33],st[34],st[35],st[36],st[37],st[38],st[39],st[40],st[41],st[42]);
 
     fclose(f);
     free(full_path);
@@ -223,76 +196,44 @@ void set_up_globals(){
     run_file = GTK_WIDGET(gtk_builder_get_object(builder,"run_file"));
     file_name = GTK_WIDGET(gtk_builder_get_object(builder,"file_name"));
     fixed1 = GTK_WIDGET(gtk_builder_get_object(builder,"fixed1"));
-    s0 = GTK_WIDGET(gtk_builder_get_object(builder,"s0"));
-    s1 = GTK_WIDGET(gtk_builder_get_object(builder,"s1"));
-    s2 = GTK_WIDGET(gtk_builder_get_object(builder,"s2"));
-    s3 = GTK_WIDGET(gtk_builder_get_object(builder,"s3"));
-    s4 = GTK_WIDGET(gtk_builder_get_object(builder,"s4"));
-    s5 = GTK_WIDGET(gtk_builder_get_object(builder,"s5"));
-    s6 = GTK_WIDGET(gtk_builder_get_object(builder,"s6"));
-    s7 = GTK_WIDGET(gtk_builder_get_object(builder,"s7"));
-    s8 = GTK_WIDGET(gtk_builder_get_object(builder,"s8"));
 
-
-    o0 = GTK_WIDGET(gtk_builder_get_object(builder,"o0"));
-    o1 = GTK_WIDGET(gtk_builder_get_object(builder,"o1"));
-    o2 = GTK_WIDGET(gtk_builder_get_object(builder,"o2"));
-    o3 = GTK_WIDGET(gtk_builder_get_object(builder,"o3"));
-    o4 = GTK_WIDGET(gtk_builder_get_object(builder,"o4"));
-    o5 = GTK_WIDGET(gtk_builder_get_object(builder,"o5"));
-    o6 = GTK_WIDGET(gtk_builder_get_object(builder,"o6"));
-    o7 = GTK_WIDGET(gtk_builder_get_object(builder,"o7"));
-    o8 = GTK_WIDGET(gtk_builder_get_object(builder,"o8"));
-    o9 = GTK_WIDGET(gtk_builder_get_object(builder,"o9"));
-    o10 = GTK_WIDGET(gtk_builder_get_object(builder,"o10"));
-    o11 = GTK_WIDGET(gtk_builder_get_object(builder,"o11"));
-
-    f0 = GTK_WIDGET(gtk_builder_get_object(builder,"f0"));
-    f1 = GTK_WIDGET(gtk_builder_get_object(builder,"f1"));
-    f2 = GTK_WIDGET(gtk_builder_get_object(builder,"f2"));
-    f3 = GTK_WIDGET(gtk_builder_get_object(builder,"f3"));
-    f4 = GTK_WIDGET(gtk_builder_get_object(builder,"f4"));
-    f5 = GTK_WIDGET(gtk_builder_get_object(builder,"f5"));
-
-    e0 = GTK_WIDGET(gtk_builder_get_object(builder,"e0"));
+    char buff[1000]; //buffer for strings (assumes strings are no larger than 1000)
+    for(int i = 0 ;  i < SIM_SIZE; i++){
+        sprintf(buff,"s%i",i);
+        s[i] = GTK_WIDGET(gtk_builder_get_object(builder,buff));
+    }    
+    for(int i = 0 ;  i < ORG_SIZE; i++){
+        sprintf(buff,"o%i",i);
+        o[i] = GTK_WIDGET(gtk_builder_get_object(builder,buff));
+    }
+    for(int i = 0 ;  i < FAULT_SIZE; i++){
+        sprintf(buff,"f%i",i);
+        f[i] = GTK_WIDGET(gtk_builder_get_object(builder,buff));
+    }
+    for(int i = 0 ;  i < ECC_SIZE; i++){
+        sprintf(buff,"e%i",i);
+        e[i] = GTK_WIDGET(gtk_builder_get_object(builder,buff));
+    }
+    for(int i = 0 ;  i < FIT_SIZE; i++){
+        sprintf(buff,"fi%i",i);
+        fi[i] = GTK_WIDGET(gtk_builder_get_object(builder,buff));
+    }
 }
 
 
 void set_up_default(){
 
-    gtk_entry_set_text(GTK_ENTRY(s0),"2");
-    gtk_entry_set_text(GTK_ENTRY(s1),"3600");
-    gtk_entry_set_text(GTK_ENTRY(s2),"10800");
-    gtk_entry_set_text(GTK_ENTRY(s3),"220752000");
-    gtk_entry_set_text(GTK_ENTRY(s4),"100000");
-    gtk_entry_set_text(GTK_ENTRY(s5),"1");
-    gtk_entry_set_text(GTK_ENTRY(s6),"1");
-    gtk_entry_set_text(GTK_ENTRY(s7),"1");
-    gtk_entry_set_text(GTK_ENTRY(s8),"7257600");
+    for(int i = 0 ;  i < SIM_SIZE; i++)
+        gtk_entry_set_text(GTK_ENTRY(s[i]),"0");
+    for(int i = 0 ;  i < ORG_SIZE; i++)
+        gtk_entry_set_text(GTK_ENTRY(o[i]),"0");
+    for(int i = 0 ;  i < FAULT_SIZE; i++)
+        gtk_entry_set_text(GTK_ENTRY(f[i]),"0");
+    for(int i = 0 ;  i < ECC_SIZE; i++)
+        gtk_entry_set_text(GTK_ENTRY(e[i]),"0");
+    for(int i = 0 ;  i < FIT_SIZE; i++)
+        gtk_entry_set_text(GTK_ENTRY(fi[i]),"0");
 
-
-
-    gtk_entry_set_text(GTK_ENTRY(o0),"0");
-    gtk_entry_set_text(GTK_ENTRY(o1),"18");
-    gtk_entry_set_text(GTK_ENTRY(o2),"4");
-    gtk_entry_set_text(GTK_ENTRY(o3),"1");
-    gtk_entry_set_text(GTK_ENTRY(o4),"8");
-    gtk_entry_set_text(GTK_ENTRY(o5),"16384");
-    gtk_entry_set_text(GTK_ENTRY(o6),"2048");
-    gtk_entry_set_text(GTK_ENTRY(o7),"0");
-    gtk_entry_set_text(GTK_ENTRY(o8),"0");
-    gtk_entry_set_text(GTK_ENTRY(o9),"0");
-    gtk_entry_set_text(GTK_ENTRY(o10),"0");
-    gtk_entry_set_text(GTK_ENTRY(o11),"512");
-
-    gtk_entry_set_text(GTK_ENTRY(f0),"1");
-    gtk_entry_set_text(GTK_ENTRY(f1),"1");
-    gtk_entry_set_text(GTK_ENTRY(f2),"1");
-    gtk_entry_set_text(GTK_ENTRY(f3),"0");
-    gtk_entry_set_text(GTK_ENTRY(f4),"1.0");
-    gtk_entry_set_text(GTK_ENTRY(f5),"1.0");
-
-    gtk_entry_set_text(GTK_ENTRY(e0),"0");
 }
 
 bool ini_settings_update (void) {
@@ -315,36 +256,52 @@ extern "C" void on_load_file_clicked(GtkButton *b) {
 
   if ( !ini_settings_update() ) return;
 
-  gtk_entry_set_text(GTK_ENTRY(s0), std::to_string(settings.sim_mode).c_str());
-  gtk_entry_set_text(GTK_ENTRY(s1), std::to_string(settings.interval_s).c_str());
-  gtk_entry_set_text(GTK_ENTRY(s2), std::to_string(settings.scrub_s).c_str());
-  gtk_entry_set_text(GTK_ENTRY(s3), std::to_string(settings.max_s).c_str());
-  gtk_entry_set_text(GTK_ENTRY(s4), std::to_string(settings.n_sims).c_str());
-  gtk_entry_set_text(GTK_ENTRY(s5), std::to_string(settings.continue_running).c_str());
-  gtk_entry_set_text(GTK_ENTRY(s6), std::to_string(settings.verbose).c_str());
-  gtk_entry_set_text(GTK_ENTRY(s7), std::to_string(settings.debug).c_str());
-  gtk_entry_set_text(GTK_ENTRY(s8), std::to_string(settings.output_bucket_s).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s[0]), std::to_string(settings.sim_mode).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s[1]), std::to_string(settings.interval_s).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s[2]), std::to_string(settings.scrub_s).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s[3]), std::to_string(settings.max_s).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s[4]), std::to_string(settings.n_sims).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s[5]), std::to_string(settings.continue_running).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s[6]), std::to_string(settings.verbose).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s[7]), std::to_string(settings.debug).c_str());
+  gtk_entry_set_text(GTK_ENTRY(s[8]), std::to_string(settings.output_bucket_s).c_str());
 
-  gtk_entry_set_text(GTK_ENTRY(o0), std::to_string(settings.organization).c_str());
-  gtk_entry_set_text(GTK_ENTRY(o1), std::to_string(settings.chips_per_rank).c_str());
-  gtk_entry_set_text(GTK_ENTRY(o2), std::to_string(settings.chip_bus_bits).c_str());
-  gtk_entry_set_text(GTK_ENTRY(o3), std::to_string(settings.ranks).c_str());
-  gtk_entry_set_text(GTK_ENTRY(o4), std::to_string(settings.banks).c_str());
-  gtk_entry_set_text(GTK_ENTRY(o5), std::to_string(settings.rows).c_str());
-  gtk_entry_set_text(GTK_ENTRY(o6), std::to_string(settings.cols).c_str());
-  gtk_entry_set_text(GTK_ENTRY(o7), std::to_string(settings.cube_model).c_str());
-  gtk_entry_set_text(GTK_ENTRY(o8), std::to_string(settings.cube_addr_dec_depth).c_str());
-  gtk_entry_set_text(GTK_ENTRY(o9), std::to_string(settings.cube_ecc_tsv).c_str());
-  gtk_entry_set_text(GTK_ENTRY(o10), std::to_string(settings.cube_redun_tsv).c_str());
-  gtk_entry_set_text(GTK_ENTRY(o11), std::to_string(settings.data_block_bits).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o[0]), std::to_string(settings.organization).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o[1]), std::to_string(settings.chips_per_rank).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o[2]), std::to_string(settings.chip_bus_bits).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o[3]), std::to_string(settings.ranks).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o[4]), std::to_string(settings.banks).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o[5]), std::to_string(settings.rows).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o[6]), std::to_string(settings.cols).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o[7]), std::to_string(settings.cube_model).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o[8]), std::to_string(settings.cube_addr_dec_depth).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o[9]), std::to_string(settings.cube_ecc_tsv).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o[10]), std::to_string(settings.cube_redun_tsv).c_str());
+  gtk_entry_set_text(GTK_ENTRY(o[11]), std::to_string(settings.data_block_bits).c_str());
 
-  gtk_entry_set_text(GTK_ENTRY(f0), std::to_string(settings.faultmode).c_str());
-  gtk_entry_set_text(GTK_ENTRY(f1), std::to_string(settings.enable_permanent).c_str());
-  gtk_entry_set_text(GTK_ENTRY(f2), std::to_string(settings.enable_transient).c_str());
-  gtk_entry_set_text(GTK_ENTRY(f3), std::to_string(settings.enable_tsv).c_str());
-  gtk_entry_set_text(GTK_ENTRY(f4), std::to_string(settings.fit_factor).c_str());
-  gtk_entry_set_text(GTK_ENTRY(f5), std::to_string(settings.tsv_fit).c_str());
+  gtk_entry_set_text(GTK_ENTRY(f[0]), std::to_string(settings.faultmode).c_str());
+  gtk_entry_set_text(GTK_ENTRY(f[1]), std::to_string(settings.enable_permanent).c_str());
+  gtk_entry_set_text(GTK_ENTRY(f[2]), std::to_string(settings.enable_transient).c_str());
+  gtk_entry_set_text(GTK_ENTRY(f[3]), std::to_string(settings.enable_tsv).c_str());
+  gtk_entry_set_text(GTK_ENTRY(f[4]), std::to_string(settings.fit_factor).c_str());
+  gtk_entry_set_text(GTK_ENTRY(f[5]), std::to_string(settings.tsv_fit).c_str());
 
-  gtk_entry_set_text(GTK_ENTRY(e0), std::to_string(settings.repairmode).c_str());
+  gtk_entry_set_text(GTK_ENTRY(e[0]), std::to_string(settings.repairmode).c_str());
+  gtk_entry_set_text(GTK_ENTRY(e[1]), std::to_string(settings.symbol_size_bits).c_str());
+
+  gtk_entry_set_text(GTK_ENTRY(fi[0]), std::to_string(settings.trans_1bit).c_str());
+  gtk_entry_set_text(GTK_ENTRY(fi[1]), std::to_string(settings.trans_1word).c_str());
+  gtk_entry_set_text(GTK_ENTRY(fi[2]), std::to_string(settings.trans_1col).c_str());
+  gtk_entry_set_text(GTK_ENTRY(fi[3]), std::to_string(settings.trans_1row).c_str());
+  gtk_entry_set_text(GTK_ENTRY(fi[4]), std::to_string(settings.trans_1bank).c_str());
+  gtk_entry_set_text(GTK_ENTRY(fi[5]), std::to_string(settings.trans_nbank).c_str());
+  gtk_entry_set_text(GTK_ENTRY(fi[6]), std::to_string(settings.trans_nrank).c_str()); 
+  gtk_entry_set_text(GTK_ENTRY(fi[7]), std::to_string(settings.perm_1bit).c_str());
+  gtk_entry_set_text(GTK_ENTRY(fi[8]), std::to_string(settings.perm_1word).c_str());
+  gtk_entry_set_text(GTK_ENTRY(fi[9]), std::to_string(settings.perm_1col).c_str());
+  gtk_entry_set_text(GTK_ENTRY(fi[10]), std::to_string(settings.perm_1row).c_str());
+  gtk_entry_set_text(GTK_ENTRY(fi[11]), std::to_string(settings.perm_1bank).c_str());
+  gtk_entry_set_text(GTK_ENTRY(fi[12]), std::to_string(settings.perm_nbank).c_str());
+  gtk_entry_set_text(GTK_ENTRY(fi[13]), std::to_string(settings.perm_nrank).c_str());
 
 }
