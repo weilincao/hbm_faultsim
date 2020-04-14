@@ -24,7 +24,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include <math.h>
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
+#include "Synopsis.hh"
 using namespace std;
+
+extern Synopsis **SN;
 
 class CompareFR {
 public:
@@ -61,7 +64,8 @@ uint64_t EventSimulation::runOne( uint64_t max_s, int verbose, uint64_t bin_leng
 	int err_inserted = 0;
 
 	int devices = 0;
-	for( list<FaultDomain*>::iterator it1 = pChips->begin(); it1 != pChips->end(); it1++ )
+        int syn_i = 0;
+	for( list<FaultDomain*>::iterator it1 = pChips->begin(); it1 != pChips->end(); it1++, syn_i++ )
 	{
 		DRAMDomain* pD = (DRAMDomain*)(*it1);
 		double period=0;
@@ -135,11 +139,13 @@ uint64_t EventSimulation::runOne( uint64_t max_s, int verbose, uint64_t bin_leng
 					if( fr->transient ){ 
                                             fr->m_pDRAM->n_faults_transient++; 
                                             pD->event_fault_update(errtype%7,1);
+                                            SN[syn_i]->trans_faults[errtype%7]++;
 
                                         }
 					else {
                                             fr->m_pDRAM->n_faults_permanent++;
                                             pD->event_fault_update(errtype%7,0);
+                                            SN[syn_i]->perm_faults[errtype%7]++;
                                         }
 					q1.push( fr );
 					//iter_num_errors++;

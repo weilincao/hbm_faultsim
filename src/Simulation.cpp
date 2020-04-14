@@ -20,7 +20,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include <stdio.h>
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
+#include "Synopsis.hh"
 using namespace std;
+
+/*Globals, Yes i know globals should be avoided at all cost but this is the only thing i can think of without changing the whole code base */
+Synopsis **SN;
+extern int DRAMMODULES;
+
 
 Simulation::Simulation( uint64_t interval_t, uint64_t scrub_interval_t, double fit_factor_t , uint test_mode_t, bool debug_mode_t, bool cont_running_t, uint64_t output_bucket_t) :
 				  m_interval(interval_t)
@@ -115,20 +121,38 @@ void Simulation::simulate( uint64_t max_time, uint64_t n_sims, int verbose, std:
 	 * MONTE CARLO SIMULATION LOOP : THIS IS THE HEART OF FAULTSIM *
 	 **************************************************************/
 	for( uint64_t i = 0; i < n_sims; i++ ) {
-
+                Synopsis *s_temp[DRAMMODULES];
+                SN = s_temp;
+                
+                for(int k = 0 ; k < DRAMMODULES; k++){
+                    SN[k] = new Synopsis();
+                    SN[k]->dram_module = k;
+                    SN[k]->sim_num = i;
+                }
+    
 		uint64_t failures = runOne( max_time, verbose, bin_length);
 		stat_total_sims++;
 
 		uint64_t trans, perm;
 		getFaultCounts( &trans, &perm );
+                int synopsis_failure;
 		if( failures != 0 ) {
 			stat_total_failures++;
 			if( verbose ) cout << "F";  // uncorrected
+                        synopsis_failure = 2;
 		} else if( trans + perm != 0 ) {
 			if( verbose ) cout << "C";	// corrected
+                        synopsis_failure = 1;
 		} else {
 			if( verbose ) cout << ".";  // no failures
+                        synopsis_failure =0;
 		}
+
+                for(int k = 0 ; k < DRAMMODULES ; k++)
+                    SN[k]->sim_stat = synopsis_failure;
+                
+                for(int k = 0 ; k < DRAMMODULES ;k++)
+                    SN[k]->print_to_csv();
 
 		if( verbose ) fflush(stdout);
 	}

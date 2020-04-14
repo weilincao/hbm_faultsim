@@ -33,6 +33,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "stdio.h"
 #include "ReedSolomonRepair_cube.hh"
 #include "CsvPrinting.hh"
+#include "Synopsis.hh"
+
+/*GLOBALS*/
+extern int DRAMMODULES;
 
 void printBanner( void );
 GroupDomain* genModuleDIMM( void );
@@ -61,6 +65,7 @@ int main(int argc, char** argv) {
     #ifdef CSV_OUT
     CSVPRINTING.init();
     #endif
+    Synopsis::init_file("synop.csv");
     printBanner();
     printf("started\n");
     
@@ -150,6 +155,8 @@ int main(int argc, char** argv) {
 
     Simulation &sim = *sim_temp;
 
+
+    DRAMMODULES = settings.chips_per_rank;
     // Run simulator //////////////////////////////////////////////////
     sim.addDomain( module );    // register the top-level memory object with the simulation engine
     sim.init( settings.max_s );	// one-time set-up that does FIT rate scaling based on interval
@@ -159,6 +166,7 @@ int main(int argc, char** argv) {
     #ifdef CSV_OUT
     CSVPRINTING.clean_up();
     #endif
+    Synopsis::file_closure();
 	return SUCCESS;
 
 }
