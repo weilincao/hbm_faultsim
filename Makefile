@@ -20,10 +20,19 @@ $(EXECUTABLE): $(OBJECTS)
 clean:
 	rm -rf faultsim
 	rm -rf src/*.o
-	cd doc && make clean
+	rm -rf faultsim_gui
+	rm -rf out.txt
+	rm -rf HBM_BCH_out.txt
+	rm -rf HBM_RS_out.txt
+	rm -rf HBM_none_out.txt
 
 doc:
 	cd doc && make
 
 trying:
 	$(CC) $(SOURCES) $(INC) $(LDFLAGS) -o faultsim
+
+debug:
+	$(CC) -g $(SOURCES) $(INC) $(LDFLAGS) -o faultsim
+gui:
+	g++ -std=c++11 -rdynamic -o faultsim_gui src/ConfigParser.cpp faultsim_gui.c `pkg-config --cflags --libs gtk+-3.0` -export-dynamic

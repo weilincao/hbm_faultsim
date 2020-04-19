@@ -31,6 +31,12 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include "EventSimulation.hh"
 #include "Settings.hh"
 #include "stdio.h"
+#include "ReedSolomonRepair_cube.hh"
+#include "CsvPrinting.hh"
+#include "Synopsis.hh"
+
+/*GLOBALS*/
+extern int DRAMMODULES;
 
 void printBanner( void );
 GroupDomain* genModuleDIMM( void );
@@ -56,8 +62,11 @@ struct Settings settings;
 int main(int argc, char** argv) {
 
     std::string chain="NULL";
+    #ifdef CSV_OUT
+    CSVPRINTING.init();
+    #endif
+    Synopsis::init_file("synop.csv");
     printBanner();
-    printf("started\n");
     
 	try {
 		 //Define and parse the program options
@@ -99,7 +108,6 @@ int main(int argc, char** argv) {
 
 	}
 	
-	printf("ended\n");
     cout<<"The selected config file is: "<<chain<<endl;
     char * config_opt = new char [chain.size()+1];
     strcpy (config_opt,chain.c_str());
@@ -110,7 +118,6 @@ int main(int argc, char** argv) {
 
     // Build the physical memory organization and attach ECC scheme /////
     GroupDomain *module = NULL;
-
     if( settings.organization == MO_DIMM ) {
     	module = genModuleDIMM();
     } else if( settings.organization == MO_3D ) {
@@ -146,12 +153,18 @@ int main(int argc, char** argv) {
 
     Simulation &sim = *sim_temp;
 
+
+    DRAMMODULES = settings.chips_per_rank;
     // Run simulator //////////////////////////////////////////////////
     sim.addDomain( module );    // register the top-level memory object with the simulation engine
     sim.init( settings.max_s );	// one-time set-up that does FIT rate scaling based on interval
     sim.simulate( settings.max_s, settings.n_sims, settings.verbose, settings.output_file);
     sim.printStats();
-
+    
+    #ifdef CSV_OUT
+    CSVPRINTING.clean_up();
+    #endif
+    Synopsis::file_closure();
 	return SUCCESS;
 
 }
@@ -178,23 +191,23 @@ GroupDomain* genModuleDIMM( void )
 			if( settings.enable_permanent ) dram0->setFIT( DRAM_1BIT, 0, 33.05 );
 		} else if( settings.faultmode == FM_JAGUAR ) {
 			if( settings.enable_transient ) {
-				dram0->setFIT( DRAM_1BIT, 1, 14.2 );
-				dram0->setFIT( DRAM_1WORD, 1, 1.4 );
-				dram0->setFIT( DRAM_1COL, 1, 1.4 );
-				dram0->setFIT( DRAM_1ROW, 1, 0.2 );
-				dram0->setFIT( DRAM_1BANK, 1, 0.8 );
-				dram0->setFIT( DRAM_NBANK, 1, 0.3 );
-				dram0->setFIT( DRAM_NRANK, 1, 0.9 );
+				dram0->setFIT( DRAM_1BIT, 1, settings.trans_1bit);
+				dram0->setFIT( DRAM_1WORD, 1, settings.trans_1word);
+				dram0->setFIT( DRAM_1COL, 1, settings.trans_1col);
+				dram0->setFIT( DRAM_1ROW, 1, settings.trans_1row);
+				dram0->setFIT( DRAM_1BANK, 1, settings.trans_1bank);
+				dram0->setFIT( DRAM_NBANK, 1, settings.trans_nbank);
+				dram0->setFIT( DRAM_NRANK, 1, settings.trans_nrank);
 			}
 
 			if( settings.enable_permanent ) {
-				dram0->setFIT( DRAM_1BIT, 0, 18.6 );
-				dram0->setFIT( DRAM_1WORD, 0, 0.3 );
-				dram0->setFIT( DRAM_1COL, 0, 5.6 );
-				dram0->setFIT( DRAM_1ROW, 0, 8.2 );
-				dram0->setFIT( DRAM_1BANK, 0, 10.0 );
-				dram0->setFIT( DRAM_NBANK, 0, 1.4 );
-				dram0->setFIT( DRAM_NRANK, 0, 2.8 );
+				dram0->setFIT( DRAM_1BIT, 0, settings.perm_1bit);
+				dram0->setFIT( DRAM_1WORD, 0, settings.perm_1word);
+				dram0->setFIT( DRAM_1COL, 0, settings.perm_1col);
+				dram0->setFIT( DRAM_1ROW, 0, settings.perm_1row);
+				dram0->setFIT( DRAM_1BANK, 0, settings.perm_1bank);
+				dram0->setFIT( DRAM_NBANK, 0, settings.perm_nbank);
+				dram0->setFIT( DRAM_NRANK, 0, settings.perm_nrank);
 			}
 		} else {
 			assert(0);
@@ -260,23 +273,23 @@ GroupDomain *genModule3D( void )
 			if( settings.enable_permanent ) dram0->setFIT( DRAM_1BIT, 0, 33.05 );
 		} else if( settings.faultmode == FM_JAGUAR ) {
 			if( settings.enable_transient ) {
-				dram0->setFIT( DRAM_1BIT, 1, 14.2 );
-				dram0->setFIT( DRAM_1WORD, 1, 1.4 );
-				dram0->setFIT( DRAM_1COL, 1, 1.4 );
-				dram0->setFIT( DRAM_1ROW, 1, 0.2 );
-				dram0->setFIT( DRAM_1BANK, 1, 0.8 );
-				dram0->setFIT( DRAM_NBANK, 1, 0.3 );
-				dram0->setFIT( DRAM_NRANK, 1, DRAM_nrank_fit_trans );
+				dram0->setFIT( DRAM_1BIT, 1, settings.trans_1bit);
+				dram0->setFIT( DRAM_1WORD, 1, settings.trans_1word);
+				dram0->setFIT( DRAM_1COL, 1, settings.trans_1col);
+				dram0->setFIT( DRAM_1ROW, 1, settings.trans_1row);
+				dram0->setFIT( DRAM_1BANK, 1, settings.trans_1bank);
+				dram0->setFIT( DRAM_NBANK, 1, settings.trans_nbank);
+				dram0->setFIT( DRAM_NRANK, 1, settings.trans_nrank);
 			}
 
 			if( settings.enable_permanent ) {
-				dram0->setFIT( DRAM_1BIT, 0, 18.6 );
-				dram0->setFIT( DRAM_1WORD, 0, 0.3 );
-				dram0->setFIT( DRAM_1COL, 0, 5.6 );
-				dram0->setFIT( DRAM_1ROW, 0, 8.2 );
-				dram0->setFIT( DRAM_1BANK, 0, 10.0 );
-				dram0->setFIT( DRAM_NBANK, 0, 1.4 );
-				dram0->setFIT( DRAM_NRANK, 0, DRAM_nrank_fit_perm );
+				dram0->setFIT( DRAM_1BIT, 0, settings.perm_1bit);
+				dram0->setFIT( DRAM_1WORD, 0, settings.perm_1word);
+				dram0->setFIT( DRAM_1COL, 0, settings.perm_1col);
+				dram0->setFIT( DRAM_1ROW, 0, settings.perm_1row);
+				dram0->setFIT( DRAM_1BANK, 0, settings.perm_1bank);
+				dram0->setFIT( DRAM_NBANK, 0, settings.perm_nbank);
+				dram0->setFIT( DRAM_NRANK, 0, settings.perm_nrank);
 			}
 		} else {
 			assert(0);
@@ -284,8 +297,10 @@ GroupDomain *genModule3D( void )
 
 		stack0->addDomain( dram0, i );
 	}
-
-	if( settings.repairmode == 1 ) {
+	
+	if(settings.repairmode == 0) {
+		//do nothing
+	} else if( settings.repairmode == 1 ) {
 		ChipKillRepair_cube *ck0 = new ChipKillRepair_cube( string("CK1"), 1, 2, stack0);
 		stack0->addRepair( ck0 );
 	} else if( settings.repairmode == 2 ) {
@@ -297,13 +312,16 @@ GroupDomain *genModule3D( void )
 	} else if( settings.repairmode == 4 ) {
 		BCHRepair_cube *bch1 = new BCHRepair_cube( string("3EC4ED"), 3, 4, settings.data_block_bits );
 		stack0->addRepair( bch1 ); //Repair from Fault Domain
-	} else if( settings.repairmode == 5 ) {
+	} else if( settings.repairmode == 5 && settings.data_block_bits == 512 ) {
 		BCHRepair_cube *bch2 = new BCHRepair_cube( string("6EC7ED"), 6, 7, settings.data_block_bits );
 		stack0->addRepair( bch2 );
 	}
-	else if( settings.repairmode == 6 ) {
+	else if( settings.repairmode == 6  && settings.symbol_size_bits == 8) {
+		ReedSolomonRepair_cube *RS0 = new ReedSolomonRepair_cube( string("Repair0"), (settings.data_block_bits/128), (settings.data_block_bits/128)+1, settings.data_block_bits, settings.symbol_size_bits);
+		stack0->addRepair( RS0 );
+	}
+	else {
 		assert(0);
 	}
-
 	return stack0;
 }

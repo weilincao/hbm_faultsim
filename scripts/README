@@ -1,0 +1,52 @@
+Dependencies to download:
+
+ALL PYTHON:
+
+* python3
+
+* matplotlib
+
+* pandas
+
+* numpy
+
+
+I think they can all be installed with pip3 install 
+
+
+
+Running the test and compilation of data:
+
+python3 test_and_comp.py INI_FILE.ini "increment" OUT.csv
+
+
+INI_FILE.ini : This is a .ini file found in configs. You do not need to put the path just the name of the ini file
+
+"increment" : Running all our simulations in one go is not a good idea because it will make a huge CSV file. To avoid this
+              we can have the simulation numbers in the .ini file to be about 1000 (maybe more is ok) and then we can 
+              use the increment field to make more simulations.
+
+              example: if i had the .ini file to be 1000 simulations and i wanted a 1,000,000 simulations i would put:
+                        
+              python3 test_and_comp.py my.ini 1000 out.csv 
+
+              This is because 1000 * 1000 = 1,000,000
+
+OUT.csv : This is simply the name of the csv you want all the output to go
+
+
+
+
+Making graphs:
+
+    To make the graphs simply run:
+
+    python3 graphs.py FILE_name.csv TITLE_NAME
+
+FILE_name.csv: This is simply the name of the file you want graphed, the csv should have been made by test_and_comp.py
+
+TITLE_NAME: The name of the graphs title. This will also be the name of the PNG file, i.e. the graph will be saved as "TITLE_NAME.png"
+
+
+
+* NOTE: I knot t_1bit and p_1bit may be confusing for the x labels but trans_1bit and perm_1bti were too long and looked odd *

@@ -58,4 +58,24 @@ void parser(char *ininame)
 	settings.tsv_fit = pt.get<double>("Fault.tsv_fit");
 
 	settings.repairmode = pt.get<int>("ECC.repairmode");
+        settings.symbol_size_bits = pt.get<int>("ECC.symbol_size_bits");
+        //FAIILURE IN TIME options
+        //transient
+        settings.trans_1bit = pt.get<double>("FIT.trans_1bit");
+        settings.trans_1word = pt.get<double>("FIT.trans_1word");
+        settings.trans_1col = pt.get<double>("FIT.trans_1col");
+        settings.trans_1row = pt.get<double>("FIT.trans_1row");
+        settings.trans_1bank = pt.get<double>("FIT.trans_1bank");
+        settings.trans_nbank = pt.get<double>("FIT.trans_nbank");
+        settings.trans_nrank = pt.get<double>("FIT.trans_nrank");
+
+        //permanent
+        settings.perm_1bit = pt.get<double>("FIT.perm_1bit");
+        settings.perm_1word = pt.get<double>("FIT.perm_1word");
+        settings.perm_1col = pt.get<double>("FIT.perm_1col");
+        settings.perm_1row = pt.get<double>("FIT.perm_1row");
+        settings.perm_1bank = pt.get<double>("FIT.perm_1bank");
+        settings.perm_nbank = pt.get<double>("FIT.perm_nbank");
+        settings.perm_nrank = pt.get<double>("FIT.perm_nrank");
+
 }

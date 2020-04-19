@@ -31,6 +31,7 @@ class DRAMDomain : public FaultDomain
 	void setFIT( int faultClass, bool isTransient, double FIT );
     void init( uint64_t interval, uint64_t sim_seconds, double fit_factor );
 	int update(uint test_mode_t);	// perform one iteration
+        void event_fault_update(int fault, bool transient);
 	void repair( uint64_t &n_undetectable, uint64_t &n_uncorrectable );
 	void scrub( void );
 	virtual void reset( void );
@@ -57,6 +58,9 @@ class DRAMDomain : public FaultDomain
 
 	void generateRanges( int faultClass, bool transient ); // based on a fault, create all faulty address ranges
 	FaultRange *genRandomRange( bool rank, bool bank, bool row, bool col, bool bit, bool transient, int64_t rowbit_num, bool isTSV_t );
+	FaultRange *genTwoByteRange(bool transient);
+	FaultRange *genEightBitAtByteIntervalRange(bool transient);
+
 	const char *faultClassString( int i );
 
 	double transientFIT[DRAM_MAX];

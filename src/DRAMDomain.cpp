@@ -18,6 +18,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include <sys/time.h>
 #include "faultsim.hh"
 #include "Settings.hh"
+#include "CsvPrinting.hh"
+#include <string.h>
 
 extern struct Settings settings;
 
@@ -112,6 +114,13 @@ const char *DRAMDomain::faultClassString( int i )
 	}
 
 	return "";
+}
+
+void DRAMDomain::event_fault_update(int fault,bool transient){
+        if(transient)
+            n_faults_transient_class[fault]++;
+        else
+           n_faults_permanent_class[fault]++; 
 }
 
 int DRAMDomain::update( uint test_mode_t )
@@ -370,7 +379,7 @@ FaultRange *DRAMDomain::genRandomRange( bool rank, bool bank, bool row, bool col
 	fr->fAddr = 0;
 	fr->fWildMask = 0;
 	fr->Chip=0;
-    fr->transient = transient;
+        fr->transient = transient;
 	fr->TSV = isTSV_t;
 	fr->max_faults = 1;	// maximum number of bits covered by FaultRange
 
@@ -440,6 +449,85 @@ FaultRange *DRAMDomain::genRandomRange( bool rank, bool bank, bool row, bool col
 
 	return fr;
 }
+
+FaultRange *DRAMDomain::genTwoByteRange(bool transient){
+	//NOTE: ONLY WORKS FOR 8BIT WORD SIZE
+	FaultRange *fr = new FaultRange( this );
+	fr->fAddr = 0;
+	fr->fWildMask = 0;
+	fr->Chip=0;
+        fr->transient = transient;
+	fr->TSV = 0;
+	fr->max_faults = 16;	// maximum number of bits covered by FaultRange
+
+	//random rank
+	fr->fAddr |= (uint64_t)(eng32()%m_ranks);
+	fr->fAddr <<= m_logBanks;
+	fr->fWildMask <<= m_logBanks;
+
+	//random bank
+	fr->fAddr |= (uint64_t)(eng32()%m_banks);
+	fr->fAddr <<= m_logRows;
+	fr->fWildMask <<= m_logRows;
+
+	//random row
+	fr->fAddr |= (uint64_t)(eng32()%m_rows);
+	fr->fAddr <<= m_logCols;
+	fr->fWildMask <<= m_logCols;
+
+	//generate random column address, except for bit 0, which will be zero in address field and 1 in mask field, covering 2 bytes
+	fr->fAddr |= (uint64_t)(eng32()%m_cols);
+	uint64_t mask = 0xFFFFFFFFFFFFFFFE;
+	fr->fAddr &= mask;	//clear bit 0 in address column field
+	fr->fWildMask |= 0x1;	//set bit 0 in mask column field
+	fr->fAddr <<= m_logBits;
+	fr->fWildMask <<= m_logBits;
+
+	//for bits field only set mask field bits, as we want 1 word(byte) worth of bits
+	fr->fWildMask |= (uint64_t)(m_bitwidth-1);
+
+	return fr;
+
+}
+
+FaultRange *DRAMDomain::genEightBitAtByteIntervalRange(bool transient) {
+	//NOTE: ONLY WORKS FOR AT LEAST 8 COLUMNS
+	FaultRange *fr = new FaultRange( this );
+	fr->fAddr = 0;
+	fr->fWildMask = 0;
+	fr->Chip=0;
+        fr->transient = transient;
+	fr->TSV = 0;
+	fr->max_faults = 8;	// maximum number of bits covered by FaultRange
+
+	//random rank
+	fr->fAddr |= (uint64_t)(eng32()%m_ranks);
+	fr->fAddr <<= m_logBanks;
+	fr->fWildMask <<= m_logBanks;
+
+	//random bank
+	fr->fAddr |= (uint64_t)(eng32()%m_banks);
+	fr->fAddr <<= m_logRows;
+	fr->fWildMask <<= m_logRows;
+
+	//random row
+	fr->fAddr |= (uint64_t)(eng32()%m_rows);
+	fr->fAddr <<= m_logCols;
+	fr->fWildMask <<= m_logCols;
+	
+	//random column address except for bits [2-0] in mask for column field, covers 8 bytesof columns
+	fr->fAddr |= (uint64_t)(eng32()%m_cols);
+	uint64_t mask = 0xFFFFFFFFFFFFFFF8;
+	fr->fAddr &= mask;	//clear bit 2-0 in address column field
+	fr->fWildMask |= 0x7;	//set bit 2-0 in mask column field
+	fr->fAddr <<= m_logBits;
+	fr->fWildMask <<= m_logBits;
+
+	//leave bits field empty for address and mask, the remaining bit field should have bit 0 set in each of 8 columns
+	return fr;
+
+}
+
 
 uint32_t DRAMDomain::getLogBits(void)
 {
@@ -520,6 +608,24 @@ void DRAMDomain::printStats( void )
 			cout << "FR " << (*it)->toString() << "\n";
 		}
 	}
+
+        /*** if CSV_OUT is defined then prints a csv file to file called out.csv ***/
+        #ifdef CSV_OUT
+        char buff1[5000]; // assumes string will be no longer than characters
+        char buff2[1000];
+        buff1[0] = '\0';
+        for(int i = 0 ; i <DRAM_MAX; i++){
+            sprintf(buff2,"%li,",n_faults_transient_class[i]);
+            strcat(buff1,buff2);
+        }
+        for(int i = 0 ; i <DRAM_MAX -1; i++){
+            sprintf(buff2,"%li,",n_faults_permanent_class[i]);
+            strcat(buff1,buff2);
+        }
+        sprintf(buff2,"%li\n",n_faults_permanent_class[DRAM_MAX-1]);
+        strcat(buff1,buff2);
+        CSVPRINTING.append_str(buff1);
+        #endif 
 }
 
 void DRAMDomain::resetStats( void )

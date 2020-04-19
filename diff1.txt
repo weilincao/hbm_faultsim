@@ -1,0 +1,3 @@
+ make
+g++ -L /usr/lib/i386-linux-gnu/ -lboost_program_options -lboost_system src/GroupDomain.o src/BCHRepair_cube.o src/ChipKillRepair.o src/FaultRange.o src/GroupDomain_dimm.o src/GroupDomain_cube.o src/ChipKillRepair_cube.o src/ConfigParser.o src/EventSimulation.o src/FaultDomain.o src/RepairScheme.o src/Simulation.o src/CubeRAIDRepair.o src/DRAMDomain.o src/main.o src/BCHRepair.o -o faultsim
+
