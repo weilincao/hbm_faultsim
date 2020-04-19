@@ -67,7 +67,6 @@ int main(int argc, char** argv) {
     #endif
     Synopsis::init_file("synop.csv");
     printBanner();
-    printf("started\n");
     
 	try {
 		 //Define and parse the program options
@@ -109,7 +108,6 @@ int main(int argc, char** argv) {
 
 	}
 	
-	printf("ended\n");
     cout<<"The selected config file is: "<<chain<<endl;
     char * config_opt = new char [chain.size()+1];
     strcpy (config_opt,chain.c_str());
@@ -314,12 +312,12 @@ GroupDomain *genModule3D( void )
 	} else if( settings.repairmode == 4 ) {
 		BCHRepair_cube *bch1 = new BCHRepair_cube( string("3EC4ED"), 3, 4, settings.data_block_bits );
 		stack0->addRepair( bch1 ); //Repair from Fault Domain
-	} else if( settings.repairmode == 5 ) {
+	} else if( settings.repairmode == 5 && settings.data_block_bits == 512 ) {
 		BCHRepair_cube *bch2 = new BCHRepair_cube( string("6EC7ED"), 6, 7, settings.data_block_bits );
 		stack0->addRepair( bch2 );
 	}
-	else if( settings.repairmode == 6 && settings.data_block_bits == 512 && settings.symbol_size_bits == 8) {
-		ReedSolomonRepair_cube *RS0 = new ReedSolomonRepair_cube( string("Repair0"), 4, 5, settings.data_block_bits, settings.symbol_size_bits);
+	else if( settings.repairmode == 6  && settings.symbol_size_bits == 8) {
+		ReedSolomonRepair_cube *RS0 = new ReedSolomonRepair_cube( string("Repair0"), (settings.data_block_bits/128), (settings.data_block_bits/128)+1, settings.data_block_bits, settings.symbol_size_bits);
 		stack0->addRepair( RS0 );
 	}
 	else {

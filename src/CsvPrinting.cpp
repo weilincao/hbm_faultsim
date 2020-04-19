@@ -1,5 +1,6 @@
 #include"CsvPrinting.hh"
 #include<iostream>
+#include <stdio.h>
 
 CsvPrint CSVPRINTING;
 
